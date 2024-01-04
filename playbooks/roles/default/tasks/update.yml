@@ -1,0 +1,16 @@
+---
+- name: Update system dependencies
+  become: true
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      - python3
+      - python3-pip
+      - apache2-utils
+    state: present
+    force_apt_get: true
+    update_cache: yes

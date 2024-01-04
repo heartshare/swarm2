@@ -1,0 +1,5 @@
+---
+- name: Configure host defaults
+  block:
+    - import_tasks: update.yml
+    - import_tasks: firewall.yml
