@@ -3,15 +3,18 @@
 
 [swarm_managers]
 10.10.10.20
+
+[swarm_workers]
 10.10.10.30
-10.10.10.40
 
 [gluster_nodes]
 10.10.10.20
 10.10.10.30
-10.10.10.40
 
 [all:vars]
 ansible_connection=ssh
 ansible_user=vagrant
 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+# Disable host checking because we use an insecure private key for local testing.
+# Always enable host key checking in production!
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
