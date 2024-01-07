@@ -1,0 +1,9 @@
+[proxy]
+
+[swarm_managers]
+
+[gluster_nodes]
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=cluster

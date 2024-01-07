@@ -1,0 +1,43 @@
+---
+- name: Configure the firewall
+  block:
+    - name: Install UFW and Fail2ban
+      apt:
+        pkg:
+          - ufw
+          - fail2ban
+        update_cache: yes
+        state: latest
+
+    - name: Set logging
+      community.general.ufw:
+        logging: 'on'
+
+    - name: Allow SSH login from whitelisted IP-addresses
+      community.general.ufw:
+        rule: allow
+        src: '{{ item }}'
+      loop: '{{ ip_whitelist }}'
+
+    - name: Deny all other incoming traffic
+      community.general.ufw:
+        default: deny
+        direction: incoming
+
+    - name: Enable firewall
+      community.general.ufw:
+        state: enabled
+
+    - name: Set up fail2ban for SSH
+      copy:
+        src: jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Start and enable fail2ban
+      systemd:
+        name: fail2ban
+        state: started
+        enabled: true
