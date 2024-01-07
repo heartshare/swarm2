@@ -1,0 +1,11 @@
+---
+
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Update Docker
+  when: "'docker-ce' in ansible_facts.packages"
+  block:
+    - import_tasks: update.yml
+    - import_tasks: plugins.yml

@@ -1,0 +1,42 @@
+---
+
+- name: Install Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch="arm64" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable
+    state: present
+
+- name: Update apt
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Install Docker
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: yes
+
+- name: Add user "{{ ansible_user }}" to "docker" group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+
+- name: Reset connection to reload user groups
+  ansible.builtin.meta: reset_connection
+
+- name: Waiting for Docker service to become available
+  wait_for:
+    path: /var/run/docker.sock
+
+- name: Reload Docker service
+  shell: "systemctl reload docker"
