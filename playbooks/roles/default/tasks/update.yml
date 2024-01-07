@@ -1,6 +1,5 @@
 ---
 - name: Update system dependencies
-  become: true
   apt:
     pkg:
       - apt-transport-https

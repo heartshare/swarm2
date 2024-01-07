@@ -1,2 +1,3 @@
 ---
-whitelisted_ips: []
+ip_whitelist:
+  - 10.10.10.1 # Vagrant host IP address
