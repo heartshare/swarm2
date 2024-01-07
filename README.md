@@ -31,6 +31,16 @@ The software listed below should be available on your development machine.
 - Ruby
 - Vagrant
 
+## Getting started
+
+The easiest way to get started with this project, is to start the virtual machines using Vagrant. After that, run the ansible playbook "up" to provision the right software to the right machines. This will bring up a proxy, a swarm manager and a swarm worker.
+
+```sh
+vagrant up
+cp playbooks/config.example.yml playbooks/config.yml
+ansible-playbook -i hosts-vagrant playbooks/up.yml
+```
+
 ## Future functionality
 
 - Locked down firewall (only necessary ports open)
