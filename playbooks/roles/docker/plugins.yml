@@ -1,5 +1,4 @@
 ---
-
 - name: Check if Gluster plugin has already been initialized
   shell: docker plugin inspect glusterfs
   register: gluster_plugin_status

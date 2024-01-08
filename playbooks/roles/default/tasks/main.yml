@@ -2,5 +2,5 @@
 - name: Configure host defaults
   become: true
   block:
-    - import_tasks: update.yml
-    - import_tasks: firewall.yml
+    - include_tasks: update.yml
+    - include_tasks: firewall.yml

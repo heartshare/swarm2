@@ -1,5 +1,4 @@
 ---
-
 - name: Install Docker GPG key
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
@@ -27,7 +26,7 @@
 
 - name: Add user "{{ ansible_user }}" to "docker" group
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: '{{ ansible_user }}'
     groups: docker
     append: yes
 
@@ -39,4 +38,4 @@
     path: /var/run/docker.sock
 
 - name: Reload Docker service
-  shell: "systemctl reload docker"
+  shell: 'systemctl reload docker'
