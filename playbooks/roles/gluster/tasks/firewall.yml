@@ -1,39 +1,8 @@
 ---
-- name: GlusterFS firewall rules
+- name: Allow GlusterFS communication among nodes (trusted pool)
   become: true
-  block:
-    - name: Allow GlusterFS communication among nodes
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: 24007:24011
-        src: "{{ hostvars[item].inventory_hostname }}"
-      loop: "{{ groups['gluster_nodes'] }}"
-      when: item != inventory_hostname
-
-    - name: Allow GlusterFS brick communication among nodes
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: 49152:49251
-        src: "{{ hostvars[item].inventory_hostname }}"
-      loop: "{{ groups['gluster_nodes'] }}"
-      when: item != inventory_hostname
-
-    - name: Allow GlusterFS RPC bind among nodes
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: 111
-        src: "{{ hostvars[item].inventory_hostname }}"
-      loop: "{{ groups['gluster_nodes'] }}"
-      when: item != inventory_hostname
-
-    - name: Allow GlusterFS communication among nodes
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: 38465:38469
-        src: "{{ hostvars[item].inventory_hostname }}"
-      loop: "{{ groups['gluster_nodes'] }}"
-      when: item != inventory_hostname
+  community.general.ufw:
+    rule: allow
+    src: "{{ hostvars[item].inventory_hostname }}"
+  when: item != inventory_hostname
+  loop: "{{ groups['gluster_nodes'] }}"

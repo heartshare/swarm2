@@ -1,3 +1,7 @@
 ---
 ip_whitelist:
   - 10.10.10.1 # Vagrant host IP address
+
+gluster_mount_path: /mnt/gfs
+gluster_volume_path: /data/gfs/bricks
+gluster_volume_name: gfs

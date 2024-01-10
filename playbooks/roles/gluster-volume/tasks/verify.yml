@@ -1,0 +1,35 @@
+---
+- name: Validate if file replication works in the new volume
+  become: true
+  block:
+    - name: Create validation file
+      shell: "echo 'it works' > {{ gluster_mount_path }}/validation.txt"
+      run_once: true
+
+    - name: Wait 1s for file to be replicated
+      when: inventory_hostname != groups['gluster_nodes'][0]
+      shell: sleep 1
+
+    - name: Check if file is replicated
+      stat:
+        path: "{{ gluster_mount_path }}/validation.txt"
+      register: verified
+      when: inventory_hostname != groups['gluster_nodes'][0]
+
+    - name: Could not verify volume
+      debug:
+        msg: "Could not verify volume"
+      become: false
+      when: inventory_hostname != groups['gluster_nodes'][0] and verified.stat.exists == false
+
+    - name: Volume is verified
+      debug:
+        msg: "Volume is verified"
+      become: false
+      when: inventory_hostname != groups['gluster_nodes'][0] and verified.stat.exists == true
+
+    - name: Clean up validation file
+      file:
+        path: "{{ gluster_volume_path }}/validation.txt"
+        state: absent
+      when: inventory_hostname == groups['gluster_nodes'][0]

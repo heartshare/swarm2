@@ -1,0 +1,47 @@
+---
+- name: Create a new volume
+  become: true
+  block:
+    - name: Check if Gluster volume is initialized
+      run_once: true
+      stat:
+        path: "{{ gluster_volume_path }}/{{ inventory_hostname }}/brick"
+      register: glustervolume
+
+    - name: Verify Gluster volume path
+      file:
+        path: "{{ gluster_volume_path }}/{{ inventory_hostname }}/brick"
+        state: directory
+
+    - name: Initialize Gluster Cluster (on first node)
+      run_once: true
+      when: glustervolume.stat.exists == false
+      loop: "{{ groups['gluster_nodes'] }}"
+      shell: gluster peer probe {{ item }}
+
+    - name: Create Gluster Volume (on first node)
+      run_once: true
+      when: glustervolume.stat.exists == false
+      shell: >
+        gluster volume create {{ gluster_volume_name }} \
+        replica {{ groups['gluster_nodes'] | length }} \
+        {% for node in groups['gluster_nodes'] %}
+          {{ node }}:{{ gluster_volume_path }}/{{ node }}/brick {% if loop.index != loop.length - 1 %} \ {% endif %}
+        {% endfor %} force
+
+    - name: Secure Gluster Volume (on first node)
+      when: inventory_hostname == groups['gluster_nodes'][0]
+      shell: >
+        gluster volume set {{ gluster_volume_name }} auth.allow \
+        {{ groups['gluster_nodes'] | join(",") }}
+
+    - name: Start Gluster Volume (on first node)
+      run_once: true
+      when: glustervolume.stat.exists == false
+      shell: gluster volume start {{ gluster_volume_name }}
+
+    - name: Wait for Gluster volume to be replicated
+      run_once: true
+      when: glustervolume.stat.exists == false
+      become: false
+      shell: sleep 10

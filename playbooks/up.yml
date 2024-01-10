@@ -27,3 +27,5 @@
     - include_vars: "{{playbook_dir}}/config.yml"
     - import_role:
         name: gluster
+    - import_role:
+        name: gluster-volume

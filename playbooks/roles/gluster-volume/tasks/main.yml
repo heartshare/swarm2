@@ -1,0 +1,7 @@
+---
+- name: Create a new volume and mount it
+  when: gluster_mount_path and gluster_volume_path and gluster_volume_name
+  block:
+    - import_tasks: init.yml
+    - import_tasks: mount.yml
+    - import_tasks: verify.yml
