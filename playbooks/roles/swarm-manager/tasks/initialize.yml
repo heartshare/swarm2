@@ -1,0 +1,20 @@
+---
+- when: inventory_hostname == groups['swarm_managers'][0]
+  block:
+    - name: Check if Swarm has already been initialized
+      shell: docker node ls
+      register: swarm_status
+      ignore_errors: true
+
+    - name: Initialize new Docker Swarm Leader
+      shell: docker swarm init --advertise-addr={{ groups['swarm_managers'][0] }}
+      when: swarm_status.rc != 0
+      run_once: true
+
+    - name: Get the Manager join-token
+      shell: docker swarm join-token --quiet manager
+      register: manager_token
+
+    - name: Get the Worker join-token
+      shell: docker swarm join-token --quiet worker
+      register: worker_token

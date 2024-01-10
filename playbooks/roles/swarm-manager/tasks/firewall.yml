@@ -1,26 +1,26 @@
 ---
-- name: Allow container discovery among nodes
+- name: Swarm firewall
   become: true
-  community.general.ufw:
-    rule: allow
-    port: 7946
-    src: '{{ hostvars[item].ansible_host }}'
-  loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
+  block:
+    - name: Allow container discovery among nodes
+      community.general.ufw:
+        rule: allow
+        port: 7946
+        src: '{{ hostvars[item].inventory_hostname }}'
+      loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
 
-- name: Allow container (ingress) overlay network
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: 4789
-    proto: udp
-    src: '{{ hostvars[item].ansible_host }}'
-  loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
+    - name: Allow container (ingress) overlay network
+      community.general.ufw:
+        rule: allow
+        port: 4789
+        proto: udp
+        src: '{{ hostvars[item].inventory_hostname }}'
+      loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
 
-- name: Enable swarm node communication
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: 2377
-    proto: tcp
-    src: '{{ hostvars[item].ansible_host }}'
-  loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
+    - name: Enable swarm node communication
+      community.general.ufw:
+        rule: allow
+        port: 2377
+        proto: tcp
+        src: '{{ hostvars[item].inventory_hostname }}'
+      loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
