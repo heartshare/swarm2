@@ -1,0 +1,22 @@
+---
+- name: Set up nginx
+  become: true
+  block:
+    - name: Install nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Configure nginx
+      ansible.builtin.template:
+        src: "nginx.conf"
+        dest: /etc/nginx/nginx.conf
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Reload nginx config
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started

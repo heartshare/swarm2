@@ -6,6 +6,12 @@
     - import_role:
         name: default
 
+- hosts: proxy
+  tasks:
+    - include_vars: '{{ playbook_dir }}/config.yml'
+    - import_role:
+        name: proxy
+
 - hosts: swarm_managers
   tasks:
     - include_vars: '{{ playbook_dir }}/config.yml'

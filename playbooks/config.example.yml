@@ -1,7 +1,13 @@
 ---
-ip_whitelist:
-  - 10.10.10.1 # Vagrant host IP address
 
+# Any address on this whitelist can login using SSH.
+ip_whitelist:
+  - 10.10.10.1 # Vagrant host address
+
+# Set this to the address you want to hide behind the proxy. 
+swarm_ip_address: 10.10.10.20 # Vagrant first swarm manager address
+
+# Change these to whatever you see fit.
 gluster_mount_path: /mnt/gfs
 gluster_volume_path: /data/gfs/bricks
 gluster_volume_name: gfs
