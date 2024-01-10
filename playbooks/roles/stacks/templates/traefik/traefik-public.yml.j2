@@ -1,0 +1,61 @@
+providers:
+  docker:
+    endpoint: tcp://socket-proxy:2375
+    swarmMode: true
+    exposedByDefault: false
+    network: traefik-public
+    constraints: Label(`traefik.constraint-label`, `traefik-public`)
+  file:
+    directory: /configurations
+    watch: true
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+
+  websecure:
+    address: :443
+    http:
+      middlewares:
+        - secure-headers@file
+      tls:
+        certResolver: letsencrypt
+
+  wireguard:
+    address: :51820/udp
+
+certificatesResolvers:
+  http:
+    acme:
+      email: {{ traefik_acme_email }}
+      storage: /certificates/acme.json
+      httpChallenge:
+        entryPoint: http
+
+  letsencrypt:
+    acme:
+      email: {{ traefik_acme_email }}
+      storage: /certificates/acme.json
+      dnsChallenge:
+        provider: transip
+        resolvers:
+          - 1.1.1.1:53
+          - 1.0.0.1:53
+
+api:
+  dashboard: true
+
+accessLog:
+  filePath: traefik.access.log
+
+log:
+  level: INFO
+  filePath: traefik.log
+
+metrics:
+  prometheus:
+    addRoutersLabels: true

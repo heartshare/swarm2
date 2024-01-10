@@ -1,0 +1,82 @@
+version: '3.9'
+
+services:
+  public:
+    image: traefik:v2.10
+    deploy:
+      update_config:
+        order: start-first
+      labels:
+        traefik.enable: 'true'
+        traefik.constraint-label: traefik-private
+        traefik.http.routers.traefik-dashboard.entrypoints: websecure
+        traefik.http.routers.traefik-dashboard.rule: Host(`traefik.{{ app_domain_name }}`)
+        traefik.http.routers.traefik-dashboard.service: api@internal
+        traefik.http.routers.traefik-dashboard.middlewares: lan-whitelist@file
+        traefik.http.routers.traefik-dashboard.tls.domains[0].main: '{{ app_domain_name }}'
+        traefik.http.routers.traefik-dashboard.tls.domains[0].sans: '*.{{ app_domain_name }}'
+        traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080
+    ports:
+      - 80:80 # HTTP
+      - 443:443 # HTTPS
+      - 51820:51820/udp # Wireguard
+    configs:
+      - source: traefik_public_config_v1
+        target: /etc/traefik/traefik.yaml
+      - source: dynamic_config_v1
+        target: /configurations/default.yml
+    volumes:
+      - traefik-public-certificates:/certificates
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with HTTPS
+      traefik-public:
+      socket-proxy:
+
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    deploy:
+      update_config:
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      NETWORKS: 1
+      SERVICES: 1
+      TASKS: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - socket-proxy
+
+volumes:
+  # Create a volume to store the certificates, there is a constraint to make sure
+  # Traefik is always deployed to the same Docker node with the same volume containing
+  # the HTTPS certificates
+  traefik-public-certificates:
+
+networks:
+  # Use the previously created public network "traefik-public", shared with other
+  # services that need to be publicly available via this Traefik
+  traefik-public:
+    driver: overlay
+    attachable: true
+    name: traefik-public
+  socket-proxy:
+    driver: overlay
+    internal: true
+    driver_opts:
+      encrypted: 'true'
+
+secrets:
+  basic_auth_users:
+    external: true
+
+configs:
+  traefik_public_config_v1:
+    file: ./traefik-public.yml
+  dynamic_config_v1:
+    file: ./dynamic.yml

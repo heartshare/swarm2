@@ -1,0 +1,39 @@
+---
+- name: Verify traefik directory exists (on first swarm node)
+  run_once: true
+  file:
+    path: "/home/{{ ansible_user }}/stacks/traefik"
+    state: directory
+
+# - name: Generate admin password hash
+#   run_once: true
+#   shell: echo $(htpasswd -nb {{ traefik_admin_user }} {{ traefik_admin_password }}) | sed -e s/\\$/\\$\\$/g
+#   register: traefik_password
+
+- name: Create Traefik stack file (on first swarm node)
+  run_once: true
+  template:
+    src: traefik/stack.yml.j2
+    dest: /home/{{ ansible_user }}/stacks/traefik/stack.yml
+    mode: 0775
+
+- name: Create Traefik config file (on first swarm node)
+  run_once: true
+  template:
+    src: traefik/dynamic.yml
+    dest: /home/{{ ansible_user }}/stacks/traefik/dynamic.yml
+    mode: 0775
+
+- name: Create Traefik stack file (on first swarm node)
+  run_once: true
+  template:
+    src: traefik/traefik-public.yml.j2
+    dest: /home/{{ ansible_user }}/stacks/traefik/traefik-public.yml
+    mode: 0775
+
+- name: Deploy stack
+  community.docker.docker_stack:
+    state: present
+    name: traefik
+    compose:
+      - /home/{{ ansible_user }}/stacks/traefik/stack.yml
