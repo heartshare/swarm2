@@ -9,3 +9,5 @@
   block:
     - include_tasks: install.yml
     - include_tasks: plugins.yml
+
+- import_tasks: firewall.yml
