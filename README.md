@@ -1,6 +1,6 @@
-# :cloud: Private cloud
+# :cloud: Self hosted swarm
 
-A straight-forward, simple to deploy, Docker swarm cluster with GlusterFS.
+A straight-forward, simple to deploy, Docker swarm with GlusterFS.
 
 ## Feature overview
 
