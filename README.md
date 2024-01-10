@@ -7,6 +7,7 @@ A straight-forward, simple to deploy, Docker swarm with GlusterFS.
 - Ansible scripts to provision servers
 - Vagrant script to provision VMs for local testing
 - GlusterFS as shared file system (3 swarm nodes required)
+- Reverse proxy to hide your home IP address
 - Locked down firewall
 
 Planned features are [listed below](#future-functionality)
@@ -45,7 +46,6 @@ ansible-playbook -i hosts-vagrant playbooks/up.yml
 
 ## Future functionality
 
-- Reverse proxy to hide your home IP address
 - Highly available applications
 - VPN to access internal services
 - Internal services
