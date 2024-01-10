@@ -9,7 +9,7 @@ end
 
 proxy_count = 1
 manager_count = 1
-worker_count = 1
+worker_count = 2
 machine_count = proxy_count + manager_count + worker_count
 
 Vagrant.configure(2) do |config|
