@@ -1,0 +1,15 @@
+---
+- name: Ensure GlusterFS is installed.
+  become: true
+  apt:
+    name:
+      - glusterfs-server
+      - glusterfs-client
+    state: present
+
+- name: Enable Gluster service
+  become: true
+  systemd:
+    name: glusterd
+    enabled: yes
+    state: started
