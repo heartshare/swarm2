@@ -5,18 +5,13 @@
   ignore_errors: true
 
 - name: Install GlusterFS plugin
-  # when: gluster_plugin_status.rc != 0
+  when: gluster_plugin_status.rc != 0
   block:
-    - name: Enable Gluster plugin
-      shell: docker plugin disable glusterfs  
-
-    - shell: docker plugin remove glusterfs
-
     - name: Install Docker Gluster plugin
-      shell: docker plugin install --alias glusterfs mochoa/glusterfs-volume-plugin:v2.0.8 --grant-all-permissions --disable    
+      shell: docker plugin install --alias glusterfs mochoa/glusterfs-volume-plugin:v2.0.8 --grant-all-permissions --disable
 
     - name: Set Gluster plugin to use Gluster nodes
-      shell: docker plugin set glusterfs SERVERS={{ groups['gluster_nodes'] | join(",") }}    
+      shell: docker plugin set glusterfs SERVERS={{ groups['gluster_nodes'] | join(",") }}
 
     - name: Enable Gluster plugin
-      shell: docker plugin enable glusterfs    
+      shell: docker plugin enable glusterfs 

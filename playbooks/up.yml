@@ -19,3 +19,5 @@
     - include_vars: '{{ playbook_dir }}/config.yml'
     - import_role:
         name: docker
+    - import_role:
+        name: swarm-worker

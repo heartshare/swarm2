@@ -1,0 +1,18 @@
+---
+- name: Swarm firewall
+  become: true
+  block:
+    - name: Allow container discovery among nodes
+      community.general.ufw:
+        rule: allow
+        port: 7946
+        src: '{{ hostvars[item].inventory_hostname }}'
+      loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
+
+    - name: Allow container (ingress) overlay network
+      community.general.ufw:
+        rule: allow
+        port: 4789
+        proto: udp
+        src: '{{ hostvars[item].inventory_hostname }}'
+      loop: "{{ query('inventory_hostnames', 'swarm_managers:swarm_workers') }}"
