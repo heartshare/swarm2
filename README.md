@@ -6,7 +6,7 @@ A straight-forward, simple to deploy, Docker swarm with GlusterFS.
 
 - Ansible scripts to provision servers
 - Vagrant script to provision VMs for local testing
-- GlusterFS as shared file system (3 swarm nodes required)
+- GlusterFS as shared file system (1 or 3+ nodes required)
 - Reverse proxy to hide your home IP address
 - Locked down firewall
 
