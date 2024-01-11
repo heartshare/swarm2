@@ -53,10 +53,11 @@ services:
       - socket-proxy
 
 volumes:
-  # Create a volume to store the certificates, there is a constraint to make sure
-  # Traefik is always deployed to the same Docker node with the same volume containing
-  # the HTTPS certificates
+  # Create a volume to store the certificates.
+  # The GlusterFS driver makes it possible to use deploy the traefik service anywhere an still use the certificates.
   traefik-public-certificates:
+    driver: glusterfs
+    name: "gfs/traefik"
 
 networks:
   # Use the previously created public network "traefik-public", shared with other
