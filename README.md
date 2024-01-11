@@ -47,6 +47,7 @@ ansible-playbook -i hosts-vagrant playbooks/up.yml
 ## Future functionality
 
 - Highly available applications
+- Private network between nodes
 - VPN to access internal services
 - Internal services
 	- Traefik
