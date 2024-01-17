@@ -21,8 +21,6 @@
         name: gluster-volume
 
 - hosts: swarm_managers
-  vars_files:
-    - '{{ playbook_dir }}/roles/stacks/variables.yml'
   tasks:
     - include_vars: '{{ playbook_dir }}/config.yml'
     - import_role:
