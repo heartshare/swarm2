@@ -4,12 +4,14 @@
   block:
     - name: Install nginx
       ansible.builtin.package:
-        name: nginx
+        name:
+          - nginx
+          - libnginx-mod-stream 
         state: present
 
     - name: Configure nginx
       ansible.builtin.template:
-        src: "nginx.conf"
+        src: nginx.j2.conf
         dest: /etc/nginx/nginx.conf
         mode: "0644"
         owner: root
@@ -19,4 +21,4 @@
       ansible.builtin.service:
         name: nginx
         enabled: true
-        state: started
+        state: reloaded

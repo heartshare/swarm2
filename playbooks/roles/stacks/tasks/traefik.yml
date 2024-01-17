@@ -13,7 +13,7 @@
 - name: Create Traefik stack file (on first swarm node)
   run_once: true
   template:
-    src: traefik/stack.yml.j2
+    src: traefik/stack.j2.yml
     dest: /home/{{ ansible_user }}/stacks/traefik/stack.yml
     mode: 0775
 
@@ -27,7 +27,7 @@
 - name: Create Traefik stack file (on first swarm node)
   run_once: true
   template:
-    src: traefik/traefik-public.yml.j2
+    src: traefik/traefik-public.j2.yml
     dest: /home/{{ ansible_user }}/stacks/traefik/traefik-public.yml
     mode: 0775
 
