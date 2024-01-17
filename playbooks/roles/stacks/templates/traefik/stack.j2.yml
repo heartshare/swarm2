@@ -77,7 +77,7 @@ volumes:
   # The GlusterFS driver makes it possible to use deploy the traefik service anywhere an still use the certificates.
   traefik-public-certificates:
     driver: glusterfs
-    name: "gfs/traefik"
+    name: "{{ gluster_volume_name }}/traefik"
 
 networks:
   # Use the previously created public network "traefik-public", shared with other
