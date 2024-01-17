@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  # This portainer agent is available on each node in the swarm (global mode).
+  agent:
+    image: portainer/agent:2.19.4
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - agent-network
+    deploy:
+      mode: global
+
+  # This is the main portainer instance and is only available from the manager node.
+  portainer:
+    image: portainer/portainer-ce:2.19.4
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    volumes:
+      - portainer-data:/data
+    networks:
+      - agent-network
+      - traefik-public
+    deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.constraint-label: traefik-public
+        traefik.http.routers.portainer.entrypoints: websecure
+        traefik.http.services.portainer.loadbalancer.server.port: 9000
+        traefik.http.routers.portainer.rule: Host(`portainer.{{ app_domain_name }}`)
+
+volumes:
+  portainer-data:
+    driver: glusterfs
+    name: "{{ gluster_volume_name }}/portainer"
+
+networks:
+  agent-network:
+    driver: overlay
+    attachable: true
+    driver_opts:
+      encrypted: 'true'
+  traefik-public:
+    external: true

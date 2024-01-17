@@ -1,0 +1,24 @@
+---
+- name: Verify if portainer directory exists
+  file:
+    path: "/home/{{ ansible_user }}/stacks/portainer"
+    state: directory
+
+- name: Verify if portainer GFS directory exists
+  become: true
+  file:
+    path: "{{ gluster_mount_path }}/portainer"
+    state: directory
+
+- name: Create portainer stack file
+  template:
+    src: portainer/stack.j2.yml
+    dest: /home/{{ ansible_user }}/stacks/portainer/stack.yml
+    mode: 0755
+
+- name: Deploy stack
+  community.docker.docker_stack:
+    state: present
+    name: portainer
+    compose:
+      - /home/{{ ansible_user }}/stacks/portainer/stack.yml

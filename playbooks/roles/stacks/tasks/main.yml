@@ -16,3 +16,4 @@
         state: present
 
     - import_tasks: traefik.yml
+    - import_tasks: portainer.yml
