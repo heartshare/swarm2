@@ -2,3 +2,5 @@
 *.log
 hosts
 playbooks/config.yml
+**/global.crt
+**/global.key

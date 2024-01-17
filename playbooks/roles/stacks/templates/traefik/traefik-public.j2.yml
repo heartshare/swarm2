@@ -34,7 +34,7 @@ certificatesResolvers:
       email: {{ traefik_acme_email }}
       storage: /certificates/acme.json
       httpChallenge:
-        entryPoint: http
+        entryPoint: web
 
   letsencrypt:
     acme:
@@ -53,7 +53,7 @@ accessLog:
   filePath: traefik.access.log
 
 log:
-  level: INFO
+  level: ERROR
   filePath: traefik.log
 
 metrics:

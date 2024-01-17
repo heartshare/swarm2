@@ -1,19 +1,18 @@
 ---
-- name: Verify stacks directory exists (on first swarm node)
+- name: Update stacks (on first swarm node)
   run_once: true
-  file:
-    path: "/home/{{ ansible_user }}/stacks"
-    state: directory
+  block:
+    - name: Verify stacks directory exists
+      file:
+        path: "/home/{{ ansible_user }}/stacks"
+        state: directory
 
+    - name: Install pip packages
+      become: true
+      apt:
+        pkg:
+          - python3-jsondiff
+          - python3-yaml
+        state: present
 
-- name: Install pip packages
-  run_once: true
-  become: true
-  apt:
-    pkg:
-      - python3-jsondiff
-      - python3-yaml
-    state: present
-    update_cache: yes
-
-- import_tasks: traefik.yml
+    - import_tasks: traefik.yml

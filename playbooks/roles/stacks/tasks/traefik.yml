@@ -1,35 +1,37 @@
 ---
-- name: Verify traefik directory exists (on first swarm node)
-  run_once: true
+- name: Verify if traefik directory exists
   file:
     path: "/home/{{ ansible_user }}/stacks/traefik"
     state: directory
 
-# - name: Generate admin password hash
-#   run_once: true
-#   shell: echo $(htpasswd -nb {{ traefik_admin_user }} {{ traefik_admin_password }}) | sed -e s/\\$/\\$\\$/g
-#   register: traefik_password
+- name: Verify if traefik GFS directory exists
+  become: true
+  file:
+    path: "{{ gluster_mount_path }}/traefik"
+    state: directory
 
-- name: Create Traefik stack file (on first swarm node)
-  run_once: true
+- name: Create Traefik stack file
   template:
     src: traefik/stack.j2.yml
     dest: /home/{{ ansible_user }}/stacks/traefik/stack.yml
-    mode: 0775
+    mode: 0755
 
-- name: Create Traefik config file (on first swarm node)
-  run_once: true
+- name: Create Traefik config file
   template:
-    src: traefik/dynamic.yml
+    src: traefik/dynamic.j2.yml
     dest: /home/{{ ansible_user }}/stacks/traefik/dynamic.yml
-    mode: 0775
+    mode: 0755
 
-- name: Create Traefik stack file (on first swarm node)
-  run_once: true
+- name: Create Traefik stack file
   template:
     src: traefik/traefik-public.j2.yml
     dest: /home/{{ ansible_user }}/stacks/traefik/traefik-public.yml
-    mode: 0775
+    mode: 0755
+
+- name: Copy local Traefik certificates
+  copy:
+    src: traefik/local-certificates
+    dest: /home/{{ ansible_user }}/stacks/traefik
 
 - name: Deploy stack
   community.docker.docker_stack:

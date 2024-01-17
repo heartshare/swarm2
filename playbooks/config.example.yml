@@ -11,3 +11,6 @@ swarm_ip_address: 10.10.10.20 # Vagrant first swarm manager address
 gluster_mount_path: /mnt/gfs
 gluster_volume_path: /data/gfs/bricks
 gluster_volume_name: gfs
+
+app_domain_name: domain.test
+traefik_acme_email: name@example.com

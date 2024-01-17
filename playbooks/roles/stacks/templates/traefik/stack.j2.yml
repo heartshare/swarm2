@@ -25,6 +25,13 @@ services:
         target: /etc/traefik/traefik.yaml
       - source: dynamic_config_v1
         target: /configurations/default.yml
+    secrets:
+      - source: global_crt
+        target: /run/secrets/global.crt
+        mode: 0400
+      - source: global_key
+        target: /run/secrets/global.key
+        mode: 0400
     volumes:
       - traefik-public-certificates:/certificates
     networks:
@@ -52,6 +59,19 @@ services:
     networks:
       - socket-proxy
 
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    networks:
+      - traefik-public
+    deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.constraint-label: traefik-public
+        traefik.http.routers.whoami.entrypoints: websecure
+        traefik.http.routers.whoami.rule: Host(`whoami.{{ app_domain_name }}`) || Host(`whoami2.{{ app_domain_name }}`)
+        traefik.http.services.whoami.loadbalancer.server.port: 80
+
 volumes:
   # Create a volume to store the certificates.
   # The GlusterFS driver makes it possible to use deploy the traefik service anywhere an still use the certificates.
@@ -73,8 +93,10 @@ networks:
       encrypted: 'true'
 
 secrets:
-  basic_auth_users:
-    external: true
+  global_crt:
+    file: local-certificates/global.crt
+  global_key:
+    file: local-certificates/global.key
 
 configs:
   traefik_public_config_v1:
