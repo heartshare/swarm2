@@ -70,6 +70,7 @@ sudo su -c 'echo "address=/.test/10.10.10.10" >> /etc/dnsmasq.conf'
 ## Future functionality
 
 - Better documentation
+- Optional proxy to hide your home IP address
 - Highly available applications
 - Private network between nodes
 - VPN to access internal services
